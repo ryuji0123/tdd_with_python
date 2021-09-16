@@ -1,0 +1,18 @@
+version: "3"
+services:
+  selenium:
+    image: selenium/standalone-chrome:4.0.0-rc-2-prerelease-20210915
+    ports:
+      - 4444
+      - 5901:5900
+  app:
+    build: ./docker
+    container_name: "${USER}_${REPOSITORY_NAME}"
+    environment:
+      SELEMIUM_URL: http://selenium:4444/wd/hub
+    image: "${USER}_${REPOSITORY_NAME}"
+    ports:
+      - ${DJANGO_PORT}:${DJANGO_PORT}
+    tty: true
+    volumes:
+      - ./:/workstation
