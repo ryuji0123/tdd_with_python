@@ -1,4 +1,4 @@
-FROM pytorch/pytorch:1.6.0-cuda10.1-cudnn7-devel
+FROM python:3.9.7
 
 # apt-get
 ENV DEBIAN_FRONTEND noninteractive
@@ -14,24 +14,6 @@ ENV WORK_PATH /workspace
 WORKDIR $WORK_PATH
 ENV PYTHONPATH "/workspace:${PYTHONPATH}"
 ENV PIP_OPTIONS "--no-cache-dir --progress-bar off"
-COPY docker/requirements.txt $WORK_PATH/docker/
+COPY requirements.txt $WORK_PATH/docker/
 RUN pip install ${PIP_OPTIONS} -r $WORK_PATH/docker/requirements.txt && \
-    pip install ${PIP_OPTIONS} -U setuptools && \
-    jupyter serverextension enable --py jupyterlab
-
-# install nodejs for plotly
-RUN curl -sL https://deb.nodesource.com/setup_15.x | sudo -E bash -&& \
-    apt-get install -y nodejs
-
-# support plotly on jupyter lab
-RUN jupyter labextension install jupyterlab-plotly
-
-# duser setting
-ARG USER_ID
-ARG GROUP_ID
-RUN addgroup --gid $GROUP_ID duser && \
-    adduser --disabled-password --gecos '' --uid $USER_ID --gid $GROUP_ID duser && \
-    adduser duser sudo && \
-    echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-
-USER duser
+    pip install ${PIP_OPTIONS} -U setuptools
